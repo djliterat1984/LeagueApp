@@ -3,34 +3,25 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {FlatList, View} from 'react-native';
 import {CountryDetail} from '../Components/CountryDetail';
+import {useAppDispatch, useAppSelector} from '../hooks/commonHooks';
 import {
   CountryResponse,
   LeagueResponse,
 } from '../interfaces/CountriesInterface';
+import {loadCountriesAction} from '../redux/actions/indexActions';
 
 export const HomeScreen = () => {
-  const [countries, setCountries] = useState<CountryResponse[]>([]);
+  //const [countryList, setCountries] = useState<CountryResponse[]>([]);
   const {navigate} = useNavigation();
+  const dispatch = useAppDispatch();
+  const {countries} = useAppSelector(state => state.countryReducer);
 
   useEffect(() => {
     getCountries();
   }, []);
 
-  const urlCountries =
-    'https://apiv3.apifootball.com/?action=get_countries&APIkey=e804e01ec1b7e4043d738e61879fe8299930b978f38205daad9e9896d82d97c9';
   const getCountries = async () => {
-    const response = await axios
-      .get<CountryResponse[]>(urlCountries)
-      .then(resp =>
-        setCountries(
-          resp.data.sort((a, b) => {
-            if (a.country_name > b.country_name) return 1;
-            else if (a.country_name < b.country_name) return -1;
-            else return 0;
-          }),
-        ),
-      )
-      .catch(error => console.log(error));
+    dispatch(loadCountriesAction());
   };
 
   const onPress = async (countryId: string) => {
