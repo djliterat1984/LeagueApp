@@ -1,44 +1,27 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {HomeScreen} from '../Screens/HomeScreen';
+import {CountryScreen} from '../Screens/CountryScreen';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {SettingsScreen} from '../Screens/SettingsScreen';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {CountryLeagueNavigator} from './CountryLeagueNavigator';
+import {LeagueScreen} from '../Screens/LeagueScreen';
+import {LeagueResponse} from '../interfaces/CountriesInterface';
 
 export type RootStackParams = {
+  CountryScreen: undefined;
+  LeagueScreen: {countryId: string};
   CountryLeague: undefined;
-  SettingsScreen: undefined;
 };
 
-const Tab = createBottomTabNavigator<RootStackParams>();
+const Stack = createStackNavigator<RootStackParams>();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{headerShown: false}}>
-        <Tab.Screen
-          name="CountryLeague"
-          component={CountryLeagueNavigator}
-          options={{
-            tabBarLabel: 'Home',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="home" color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="SettingsScreen"
-          component={SettingsScreen}
-          options={{
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="settings" color={color} size={size} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="CountryScreen" component={CountryScreen} />
+        <Stack.Screen name="LeagueScreen" component={LeagueScreen} />
+        <Stack.Screen name="CountryLeague" component={CountryLeagueNavigator} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

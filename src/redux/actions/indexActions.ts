@@ -1,13 +1,15 @@
 import axios from 'axios';
-import {CountryResponse} from '../../interfaces/CountriesInterface';
+import leagueApi from '../../api/leagueApi';
+import {
+  CountryResponse,
+  LeagueResponse,
+} from '../../interfaces/CountriesInterface';
 import {actions} from '../reducers/countryReducer';
 
-const urlCountries =
-  'https://apiv3.apifootball.com/?action=get_countries&APIkey=e804e01ec1b7e4043d738e61879fe8299930b978f38205daad9e9896d82d97c9';
-
 export const loadCountriesAction = () => {
+  const urlCountries = `/?action=get_countries&APIkey=e804e01ec1b7e4043d738e61879fe8299930b978f38205daad9e9896d82d97c9`;
   return async (dispatch: any) => {
-    const response = await axios
+    await leagueApi
       .get<CountryResponse[]>(urlCountries)
       .then(resp =>
         dispatch(
@@ -20,6 +22,16 @@ export const loadCountriesAction = () => {
           ),
         ),
       )
+      .catch(error => console.log(error));
+  };
+};
+
+export const loadLeaguesAction = (countryId: string) => {
+  const urlLeagues = `/?action=get_leagues&country_id=${countryId}&APIkey=e804e01ec1b7e4043d738e61879fe8299930b978f38205daad9e9896d82d97c9`;
+  return async (dispatch: any) => {
+    await leagueApi
+      .get<LeagueResponse[]>(urlLeagues)
+      .then(resp => dispatch(actions.loadLeagues(resp.data)))
       .catch(error => console.log(error));
   };
 };

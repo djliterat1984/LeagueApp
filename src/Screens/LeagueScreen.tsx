@@ -1,13 +1,29 @@
 import {StackScreenProps} from '@react-navigation/stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {FlatList, Image, Text, View} from 'react-native';
 import {LeagueDetails} from '../Components/LeagueDetails';
-import {RootStackParams} from '../Navigators/CountryLeagueNavigator';
+import {useAppDispatch, useAppSelector} from '../hooks/commonHooks';
+import {RootStackParams} from '../Navigators/MainNavigator';
+import {loadLeaguesAction} from '../redux/actions/indexActions';
 
 interface Props extends StackScreenProps<RootStackParams, 'LeagueScreen'> {}
 
 export const LeagueScreen = ({navigation, route}: Props) => {
-  const {league} = route.params;
+  const {countryId} = route.params;
+  const dispatch = useAppDispatch();
+  const {leagues} = useAppSelector(state => state.countryReducer);
+
+  useEffect(() => {
+    getLeagues();
+  }, []);
+
+  const getLeagues = () => {
+    dispatch(loadLeaguesAction(countryId));
+  };
+
+  const goToDetails = () => {
+    navigation.navigate('CountryLeague');
+  };
 
   return (
     <View
@@ -24,26 +40,30 @@ export const LeagueScreen = ({navigation, route}: Props) => {
           alignItems: 'center',
           marginBottom: 20,
         }}>
-        {league[0].country_name === 'USA' ? (
+        {leagues[0].country_name === 'USA' ? (
           <Image
             source={require('../assets/usaFlag.png')}
             style={{height: 30, width: 60, marginRight: 10}}
           />
         ) : (
-          league[0].country_logo && (
+          leagues[0].country_logo && (
             <Image
-              source={{uri: league[0].country_logo}}
+              source={{uri: leagues[0].country_logo}}
               style={{height: 30, width: 60, marginRight: 10}}
             />
           )
         )}
-        <Text style={{fontSize: 20}}>{league[0].country_name}</Text>
+        <Text style={{fontSize: 20}}>{leagues[0].country_name}</Text>
       </View>
 
       <FlatList
-        data={league}
+        data={leagues}
         keyExtractor={(item, index) => item.league_id}
-        renderItem={({item}) => <LeagueDetails competition={item} />}
+        numColumns={3}
+        renderItem={({item}) => (
+          <LeagueDetails competition={item} onPress={() => goToDetails()} />
+        )}
+        contentContainerStyle={{justifyContent: 'space-evenly'}}
       />
     </View>
   );

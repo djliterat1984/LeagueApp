@@ -1,21 +1,40 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen} from '../Screens/HomeScreen';
-import {LeagueScreen} from '../Screens/LeagueScreen';
-import {LeagueResponse} from '../interfaces/CountriesInterface';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import {SettingsScreen} from '../Screens/SettingsScreen';
+import {StandingsScreen as StandingsScreen} from '../Screens/StandingsScreen';
 
 export type RootStackParams = {
-  HomeScreen: undefined;
-  LeagueScreen: {league: LeagueResponse[]};
+  StandingsScreen: undefined;
+  SettingsScreen: undefined;
 };
 
-const Stack = createStackNavigator<RootStackParams>();
+const Tabs = createBottomTabNavigator<RootStackParams>();
 
 export const CountryLeagueNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="LeagueScreen" component={LeagueScreen} />
-    </Stack.Navigator>
+    <Tabs.Navigator screenOptions={{headerShown: false}}>
+      <Tabs.Screen
+        name="StandingsScreen"
+        component={StandingsScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="home" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="settings" color={color} size={size} />
+          ),
+        }}
+      />
+    </Tabs.Navigator>
   );
 };
